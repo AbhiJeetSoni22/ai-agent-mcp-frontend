@@ -12,11 +12,12 @@ export default function ChatAssistant() {
 
   const bottomRef = useRef(null);
   const sessionIdRef = useRef(crypto.randomUUID());
-  
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  /* ================= Destructive Detection ================= */
   const isDestructive = (text) => {
     const lower = text.toLowerCase();
 
@@ -36,10 +37,7 @@ export default function ChatAssistant() {
       };
     }
 
-    if (
-      lower.includes("create a repository") ||
-      lower.includes("create repository")
-    ) {
+    if (lower.includes("create repository")) {
       return {
         title: "Create Repository",
         message:
@@ -50,11 +48,35 @@ export default function ChatAssistant() {
     return null;
   };
 
+  /* ================= Tool Labels ================= */
+  const toolLabels = {
+    web_search: "🔍 Searching web...",
+    getEvents: "📅 Fetching calendar events...",
+    createEvent: "📅 Creating calendar event...",
+    deleteEvent: "🗑 Deleting calendar event...",
+    deleteEventsByDate: "🗑 Deleting all events...",
+    send_email: "📧 Sending email...",
+    get_unread_emails: "📧 Fetching unread emails...",
+    list_repos: "💻 Fetching repositories...",
+    create_repo: "💻 Creating repository...",
+    create_issue: "🐞 Creating GitHub issue...",
+    list_issues: "📋 Fetching repository issues...",
+  };
+
+  /* ================= Execute Message ================= */
   const executeMessage = async (text) => {
-    setMessages((prev) => [...prev, { role: "user", text }]);
+    const baseURL = import.meta.env.VITE_BASE_URL;
+
+    // Add user message
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", text },
+      { role: "tool-status", text: "⚙ Processing..." },
+    ]);
+
     setInput("");
     setLoading(true);
-  const baseURL =import.meta.env.VITE_BASE_URL
+
     try {
       const res = await fetch(`${baseURL}/chat`, {
         method: "POST",
@@ -67,10 +89,31 @@ export default function ChatAssistant() {
 
       const data = await res.json();
 
-      setMessages((prev) => [...prev, { role: "assistant", text: data.reply }]);
-    } catch {
+      let updatedMessages = messages;
+
+      // Remove temporary processing message
+      setMessages((prev) => prev.filter((m) => m.role !== "tool-status"));
+
+      // Show tool activity label if used
+      if (data.toolsUsed && data.toolsUsed.length > 0) {
+        const label =
+          toolLabels[data.toolsUsed[0]] || "⚙ Running tool...";
+
+        setMessages((prev) => [
+          ...prev,
+          { role: "system", text: label },
+        ]);
+      }
+
+      // Show assistant reply
       setMessages((prev) => [
         ...prev,
+       { role: "assistant", text: data.reply || String(data) }
+
+      ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev.filter((m) => m.role !== "tool-status"),
         { role: "assistant", text: "⚠️ Server error" },
       ]);
     }
@@ -78,9 +121,9 @@ export default function ChatAssistant() {
     setLoading(false);
   };
 
-  const sendMessage = async (customText = null) => {
+  /* ================= Send Message ================= */
+  const sendMessage = (customText = null) => {
     const text = customText || input;
-
     if (!text.trim()) return;
 
     const danger = isDestructive(text);
@@ -99,6 +142,7 @@ export default function ChatAssistant() {
     if (e.key === "Enter") sendMessage();
   };
 
+  /* ================= UI ================= */
   return (
     <>
       {/* CHAT AREA */}
@@ -125,7 +169,11 @@ export default function ChatAssistant() {
                 ${
                   m.role === "user"
                     ? "bg-blue-600 text-white rounded-br-sm"
-                    : "bg-white/10 backdrop-blur-md border border-white/10 rounded-bl-sm"
+                    : m.role === "assistant"
+                    ? "bg-white/10 backdrop-blur-md border border-white/10 rounded-bl-sm"
+                    : m.role === "system"
+                    ? "bg-yellow-600/20 text-yellow-300 border border-yellow-500/30 text-xs rounded-xl"
+                    : "bg-gray-700 text-gray-300 text-xs rounded-xl"
                 }`}
               >
                 {m.text}
@@ -159,13 +207,16 @@ export default function ChatAssistant() {
           />
 
           <button
-            onClick={sendMessage}
-            className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-95 transition font-medium"
+            onClick={() => sendMessage()}
+            disabled={loading}
+            className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-95 transition font-medium disabled:opacity-50"
           >
             Send
           </button>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
       {showConfirm && confirmConfig && (
         <ConfirmationModal
           title={confirmConfig.title}
