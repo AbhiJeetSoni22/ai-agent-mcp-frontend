@@ -12,7 +12,7 @@ export default function ChatAssistant() {
 
   const bottomRef = useRef(null);
   const sessionIdRef = useRef(crypto.randomUUID());
-
+  
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -54,9 +54,9 @@ export default function ChatAssistant() {
     setMessages((prev) => [...prev, { role: "user", text }]);
     setInput("");
     setLoading(true);
-
+  const baseURL =import.meta.env.VITE_BASE_URL
     try {
-      const res = await fetch("http://localhost:5000/chat", {
+      const res = await fetch(`${baseURL}/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
