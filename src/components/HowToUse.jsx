@@ -2,7 +2,6 @@ export default function HowToUse({ onClose }) {
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50">
       <div className="bg-gray-900 border border-white/10 rounded-2xl w-full max-w-3xl max-h-[85vh] overflow-y-auto p-8 relative shadow-2xl">
-
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -24,22 +23,19 @@ export default function HowToUse({ onClose }) {
           <div className="space-y-4 text-sm text-gray-300">
             <div>
               <p className="font-medium text-white">1️⃣ View Unread Emails</p>
-              <p className="text-gray-400">
-                "Show my unread emails"
-              </p>
+              <p className="text-gray-400">"Show my unread emails"</p>
             </div>
 
             <div>
               <p className="font-medium text-white">2️⃣ Read Email by ID</p>
-              <p className="text-gray-400">
-                "Read email with ID 18c123abc..."
-              </p>
+              <p className="text-gray-400">"Read email with ID 18c123abc..."</p>
             </div>
 
             <div>
               <p className="font-medium text-white">3️⃣ Send Email</p>
               <p className="text-gray-400">
-                "Send email to abc@gmail.com with subject Meeting and body Let's meet at 5 PM"
+                "Send email to abc@gmail.com with subject Meeting and body Let's
+                meet at 5 PM"
               </p>
             </div>
           </div>
@@ -54,15 +50,14 @@ export default function HowToUse({ onClose }) {
           <div className="space-y-4 text-sm text-gray-300">
             <div>
               <p className="font-medium text-white">1️⃣ Get Events by Date</p>
-              <p className="text-gray-400">
-                "Show events on 2026-02-05"
-              </p>
+              <p className="text-gray-400">"Show events on 2026-02-05"</p>
             </div>
 
             <div>
               <p className="font-medium text-white">2️⃣ Create Event</p>
               <p className="text-gray-400">
-                "Create event Team Meeting from 2026-02-05T10:00:00Z to 2026-02-05T11:00:00Z"
+                "Create event Team Meeting from 2026-02-05T10:00:00Z to
+                2026-02-05T11:00:00Z"
               </p>
             </div>
 
@@ -75,16 +70,14 @@ export default function HowToUse({ onClose }) {
 
             <div>
               <p className="font-medium text-white">4️⃣ Delete Event</p>
-              <p className="text-gray-400">
-                "Delete event with ID 18cabc123"
-              </p>
+              <p className="text-gray-400">"Delete event with ID 18cabc123"</p>
             </div>
 
             <div>
-              <p className="font-medium text-white">5️⃣ Delete All Events of a Date</p>
-              <p className="text-gray-400">
-                "Delete all events on 2026-02-05"
+              <p className="font-medium text-white">
+                5️⃣ Delete All Events of a Date
               </p>
+              <p className="text-gray-400">"Delete all events on 2026-02-05"</p>
             </div>
           </div>
         </section>
@@ -96,12 +89,9 @@ export default function HowToUse({ onClose }) {
           </h3>
 
           <div className="space-y-4 text-sm text-gray-300">
-
             <div>
               <p className="font-medium text-white">1️⃣ List My Repositories</p>
-              <p className="text-gray-400">
-                "List my GitHub repositories"
-              </p>
+              <p className="text-gray-400">"List my GitHub repositories"</p>
             </div>
 
             <div>
@@ -120,11 +110,8 @@ export default function HowToUse({ onClose }) {
 
             <div>
               <p className="font-medium text-white">4️⃣ List Issues</p>
-              <p className="text-gray-400">
-                "Show issues in repo mcp-project"
-              </p>
+              <p className="text-gray-400">"Show issues in repo mcp-project"</p>
             </div>
-
           </div>
         </section>
 
@@ -136,10 +123,10 @@ export default function HowToUse({ onClose }) {
 
           <div className="space-y-4 text-sm text-gray-300">
             <div>
-              <p className="font-medium text-white">1️⃣ Search Current Information</p>
-              <p className="text-gray-400">
-                "Search latest AI news"
+              <p className="font-medium text-white">
+                1️⃣ Search Current Information
               </p>
+              <p className="text-gray-400">"Search latest AI news"</p>
             </div>
 
             <div>
@@ -158,10 +145,10 @@ export default function HowToUse({ onClose }) {
           </div>
 
           <p className="text-xs text-gray-500 mt-4">
-            Web search returns up to 5 real-time results including title, link, and summary.
+            Web search returns up to 5 real-time results including title, link,
+            and summary.
           </p>
         </section>
-
       </div>
     </div>
   );
