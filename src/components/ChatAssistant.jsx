@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import ConfirmationModal from "./ConfirmationModal";
-
+import ReactMarkdown from "react-markdown";
 export default function ChatAssistant() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -48,26 +48,10 @@ export default function ChatAssistant() {
     return null;
   };
 
-  /* ================= Tool Labels ================= */
-  const toolLabels = {
-    web_search: "🔍 Searching web...",
-    getEvents: "📅 Fetching calendar events...",
-    createEvent: "📅 Creating calendar event...",
-    deleteEvent: "🗑 Deleting calendar event...",
-    deleteEventsByDate: "🗑 Deleting all events...",
-    send_email: "📧 Sending email...",
-    get_unread_emails: "📧 Fetching unread emails...",
-    list_repos: "💻 Fetching repositories...",
-    create_repo: "💻 Creating repository...",
-    create_issue: "🐞 Creating GitHub issue...",
-    list_issues: "📋 Fetching repository issues...",
-  };
-
   /* ================= Execute Message ================= */
   const executeMessage = async (text) => {
     const baseURL = import.meta.env.VITE_BASE_URL;
 
-    // Add user message
     setMessages((prev) => [
       ...prev,
       { role: "user", text },
@@ -89,27 +73,15 @@ export default function ChatAssistant() {
 
       const data = await res.json();
 
-      let updatedMessages = messages;
-
-      // Remove temporary processing message
+      // ✅ Remove loading message
       setMessages((prev) => prev.filter((m) => m.role !== "tool-status"));
 
-      // Show tool activity label if used
-      if (data.toolsUsed && data.toolsUsed.length > 0) {
-        const label =
-          toolLabels[data.toolsUsed[0]] || "⚙ Running tool...";
+      // ❌ REMOVE system tool label completely
 
-        setMessages((prev) => [
-          ...prev,
-          { role: "system", text: label },
-        ]);
-      }
-
-      // Show assistant reply
+      // ✅ Only assistant reply
       setMessages((prev) => [
         ...prev,
-       { role: "assistant", text: data.reply || String(data) }
-
+        { role: "assistant", text: data.reply || String(data) },
       ]);
     } catch {
       setMessages((prev) => [
@@ -170,13 +142,17 @@ export default function ChatAssistant() {
                   m.role === "user"
                     ? "bg-blue-600 text-white rounded-br-sm"
                     : m.role === "assistant"
-                    ? "bg-white/10 backdrop-blur-md border border-white/10 rounded-bl-sm"
-                    : m.role === "system"
-                    ? "bg-yellow-600/20 text-yellow-300 border border-yellow-500/30 text-xs rounded-xl"
-                    : "bg-gray-700 text-gray-300 text-xs rounded-xl"
+                      ? "bg-white/10 backdrop-blur-md border border-white/10 rounded-bl-sm"
+                      : m.role === "system"
+                        ? "bg-yellow-600/20 text-yellow-300 border border-yellow-500/30 text-xs rounded-xl"
+                        : "bg-gray-700 text-gray-300 text-xs rounded-xl"
                 }`}
               >
-                {m.text}
+                <div
+                  className={` rounded-2xl shadow-lg max-w-[75%] text-sm leading-relaxed`}
+                >
+                  <ReactMarkdown>{m.text}</ReactMarkdown>
+                </div>
               </div>
             </div>
           ))}
