@@ -14,26 +14,29 @@ export default function Chat() {
   return (
     <div className="h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white flex flex-col">
       {/* HEADER */}
-      <header className="backdrop-blur-md bg-white/5 border-b border-white/10 shadow-md">
+     <header className="backdrop-blur-md bg-white/5 border-b border-white/10 shadow-md">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+          {/* LEFT (unchanged logo/title) */}
           <h1 className="text-xl font-semibold tracking-wide">
             🚀 MCP AI Assistant
           </h1>
 
-          <div className="flex items-center gap-6 text-sm">
+          {/* RIGHT (improved buttons) */}
+          <div className="flex items-center gap-3 md:gap-5 text-sm">
             <button
               onClick={() => setShowInstructions(true)}
-              className="text-gray-300 hover:text-white transition underline underline-offset-4"
+              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white transition"
             >
-              How to Use?
+              How to Use
             </button>
 
-            <span className="text-green-400">✅ Logged In</span>
+            <span className="hidden md:block text-gray-400 text-xs">
+              Powered by Groq + MCP
+            </span>
 
-            <span className="text-gray-500">Powered by Groq + MCP</span>
             <button
               onClick={handleLogout}
-              className="px-3 py-1 bg-red-600 rounded"
+              className="px-4 py-1.5 rounded-lg bg-red-600/80 hover:bg-red-600 transition shadow-md cursor-pointer"
             >
               Logout
             </button>
