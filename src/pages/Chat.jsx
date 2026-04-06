@@ -4,20 +4,23 @@ import HowToUse from "../components/HowToUse";
 
 export default function Chat() {
   const [showInstructions, setShowInstructions] = useState(false);
+  const handleLogout = async () => {
+    await fetch("http://localhost:5000/auth/logout", {
+      credentials: "include",
+    });
 
+    window.location.href = "/";
+  };
   return (
     <div className="h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white flex flex-col">
-
       {/* HEADER */}
       <header className="backdrop-blur-md bg-white/5 border-b border-white/10 shadow-md">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-          
           <h1 className="text-xl font-semibold tracking-wide">
             🚀 MCP AI Assistant
           </h1>
 
           <div className="flex items-center gap-6 text-sm">
-            
             <button
               onClick={() => setShowInstructions(true)}
               className="text-gray-300 hover:text-white transition underline underline-offset-4"
@@ -27,9 +30,13 @@ export default function Chat() {
 
             <span className="text-green-400">✅ Logged In</span>
 
-            <span className="text-gray-500">
-              Powered by Groq + MCP
-            </span>
+            <span className="text-gray-500">Powered by Groq + MCP</span>
+            <button
+              onClick={handleLogout}
+              className="px-3 py-1 bg-red-600 rounded"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </header>
