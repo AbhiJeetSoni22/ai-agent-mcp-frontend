@@ -68,6 +68,7 @@ export default function ChatAssistant() {
           "Content-Type": "application/json",
           "x-session-id": sessionIdRef.current,
         },
+         credentials: "include", 
         body: JSON.stringify({ message: text }),
       });
 
