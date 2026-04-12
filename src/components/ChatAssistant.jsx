@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import ConfirmationModal from "./ConfirmationModal";
 import ReactMarkdown from "react-markdown";
+
 export default function ChatAssistant() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -17,7 +18,6 @@ export default function ChatAssistant() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  /* ================= Destructive Detection ================= */
   const isDestructive = (text) => {
     const lower = text.toLowerCase();
 
@@ -48,7 +48,6 @@ export default function ChatAssistant() {
     return null;
   };
 
-  /* ================= Execute Message ================= */
   const executeMessage = async (text) => {
     const baseURL = import.meta.env.VITE_BASE_URL;
 
@@ -68,18 +67,14 @@ export default function ChatAssistant() {
           "Content-Type": "application/json",
           "x-session-id": sessionIdRef.current,
         },
-         credentials: "include", 
+        credentials: "include",
         body: JSON.stringify({ message: text }),
       });
 
       const data = await res.json();
 
-      // ✅ Remove loading message
       setMessages((prev) => prev.filter((m) => m.role !== "tool-status"));
 
-      // ❌ REMOVE system tool label completely
-
-      // ✅ Only assistant reply
       setMessages((prev) => [
         ...prev,
         { role: "assistant", text: data.reply || String(data) },
@@ -94,7 +89,6 @@ export default function ChatAssistant() {
     setLoading(false);
   };
 
-  /* ================= Send Message ================= */
   const sendMessage = (customText = null) => {
     const text = customText || input;
     if (!text.trim()) return;
@@ -115,17 +109,16 @@ export default function ChatAssistant() {
     if (e.key === "Enter") sendMessage();
   };
 
-  /* ================= UI ================= */
   return (
     <>
       {/* CHAT AREA */}
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto px-6 py-8 space-y-6">
+        <div className="max-w-4xl mx-auto px-4 py-6 space-y-4">
           {messages.length === 0 && (
-            <div className="text-center text-gray-500 mt-24">
-              <p className="text-lg">Start chatting with your AI assistant</p>
-              <p className="text-sm mt-2">
-                Ask about github, calendar, emails, or search the web
+            <div className="text-center text-gray-400 mt-24">
+              <p className="text-xl font-semibold">AI Assistant</p>
+              <p className="text-sm mt-2 opacity-70">
+                Ask about GitHub, calendar, emails, or anything...
               </p>
             </div>
           )}
@@ -138,29 +131,30 @@ export default function ChatAssistant() {
               }`}
             >
               <div
-                className={`px-5 py-3 rounded-2xl shadow-lg max-w-[75%] text-sm leading-relaxed
+                className={`group relative px-4 py-3 rounded-2xl max-w-[75%] text-sm leading-relaxed transition-all
                 ${
                   m.role === "user"
-                    ? "bg-blue-600 text-white rounded-br-sm"
+                    ? "bg-blue-600 text-white rounded-br-sm shadow-md"
                     : m.role === "assistant"
-                      ? "bg-white/10 backdrop-blur-md border border-white/10 rounded-bl-sm"
-                      : m.role === "system"
-                        ? "bg-yellow-600/20 text-yellow-300 border border-yellow-500/30 text-xs rounded-xl"
-                        : "bg-gray-700 text-gray-300 text-xs rounded-xl"
+                    ? "bg-white/10 backdrop-blur-md border border-white/10 rounded-bl-sm shadow-md hover:bg-white/15"
+                    : "bg-gray-700 text-gray-300 text-xs rounded-xl"
                 }`}
               >
-                <div
-                  className={` rounded-2xl shadow-lg max-w-[75%] text-sm leading-relaxed`}
-                >
-                  <ReactMarkdown>{m.text}</ReactMarkdown>
-                </div>
+                <ReactMarkdown>{m.text}</ReactMarkdown>
+
+                {/* subtle hover actions */}
+                {m.role === "assistant" && (
+                  <div className="absolute -bottom-5 left-2 opacity-0 group-hover:opacity-100 text-xs text-gray-400 transition">
+                    AI response
+                  </div>
+                )}
               </div>
             </div>
           ))}
 
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-white/10 px-5 py-3 rounded-2xl rounded-bl-sm flex gap-1">
+              <div className="bg-white/10 px-4 py-2 rounded-2xl rounded-bl-sm flex gap-1">
                 <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce"></span>
                 <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce delay-150"></span>
                 <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce delay-300"></span>
@@ -173,22 +167,22 @@ export default function ChatAssistant() {
       </div>
 
       {/* INPUT BAR */}
-      <div className="sticky bottom-0 backdrop-blur-md bg-black/40 border-t border-white/10">
-        <div className="max-w-4xl mx-auto p-4 flex gap-3">
+      <div className="sticky bottom-0 backdrop-blur-xl bg-black/50 border-t border-white/10">
+        <div className="max-w-4xl mx-auto p-3 flex items-center gap-3">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleEnter}
-            placeholder="Ask something..."
-            className="flex-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Type your message..."
+            className="flex-1 bg-white/10 border border-white/10 rounded-full px-5 py-3 outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
           />
 
           <button
             onClick={() => sendMessage()}
             disabled={loading}
-            className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-95 transition font-medium disabled:opacity-50"
+            className="px-5 py-3 rounded-full bg-blue-600 hover:bg-blue-500 active:scale-95 transition font-medium disabled:opacity-50 shadow-md"
           >
-            Send
+            ➤
           </button>
         </div>
       </div>
