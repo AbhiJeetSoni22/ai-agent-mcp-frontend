@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import ConfirmationModal from "./ConfirmationModal";
 import ReactMarkdown from "react-markdown";
-
+import { sendChatMessage, sendDeepSearchQuery } from "../api/api";
 export default function ChatAssistant() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -10,6 +10,9 @@ export default function ChatAssistant() {
   const [pendingMessage, setPendingMessage] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState(null);
+
+  const [mode, setMode] = useState("chat");
+  const [showMenu, setShowMenu] = useState(false);
 
   const bottomRef = useRef(null);
   const sessionIdRef = useRef(crypto.randomUUID());
@@ -49,35 +52,38 @@ export default function ChatAssistant() {
   };
 
   const executeMessage = async (text) => {
-    const baseURL = import.meta.env.VITE_BASE_URL;
-
     setMessages((prev) => [
       ...prev,
       { role: "user", text },
-      { role: "tool-status", text: "⚙ Processing..." },
+      {
+        role: "tool-status",
+        text: mode === "deep" ? "🔍 Researching..." : "⚙ Processing...",
+      },
     ]);
 
     setInput("");
     setLoading(true);
 
     try {
-      const res = await fetch(`${baseURL}/chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-session-id": sessionIdRef.current,
-        },
-        credentials: "include",
-        body: JSON.stringify({ message: text }),
-      });
+      let data;
 
-      const data = await res.json();
+      if (mode === "deep") {
+        data = await sendDeepSearchQuery(text);
+      } else {
+        data = await sendChatMessage(text, sessionIdRef.current);
+      }
 
       setMessages((prev) => prev.filter((m) => m.role !== "tool-status"));
 
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", text: data.reply || String(data) },
+        {
+          role: "assistant",
+          text:
+            mode === "deep"
+              ? data.data || "No response"
+              : data.reply || String(data),
+        },
       ]);
     } catch {
       setMessages((prev) => [
@@ -136,8 +142,8 @@ export default function ChatAssistant() {
                   m.role === "user"
                     ? "bg-blue-600 text-white rounded-br-sm shadow-md"
                     : m.role === "assistant"
-                    ? "bg-white/10 backdrop-blur-md border border-white/10 rounded-bl-sm shadow-md hover:bg-white/15"
-                    : "bg-gray-700 text-gray-300 text-xs rounded-xl"
+                      ? "bg-white/10 backdrop-blur-md border border-white/10 rounded-bl-sm shadow-md hover:bg-white/15"
+                      : "bg-gray-700 text-gray-300 text-xs rounded-xl"
                 }`}
               >
                 <ReactMarkdown>{m.text}</ReactMarkdown>
@@ -168,22 +174,101 @@ export default function ChatAssistant() {
 
       {/* INPUT BAR */}
       <div className="sticky bottom-0 backdrop-blur-xl bg-black/50 border-t border-white/10">
-        <div className="max-w-4xl mx-auto p-3 flex items-center gap-3">
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleEnter}
-            placeholder="Type your message..."
-            className="flex-1 bg-white/10 border border-white/10 rounded-full px-5 py-3 outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
-          />
+        <div className="max-w-4xl mx-auto p-3 relative">
+          {/* INPUT WRAPPER */}
+          <div className="flex items-center bg-white/10 border border-white/10 rounded-full px-3 py-2 gap-2">
+            {/* ➕ INSIDE INPUT */}
+            <div className="relative">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowMenu((prev) => !prev);
+                }}
+                className="
+            w-8 h-8 flex items-center justify-center
+            rounded-full
+            text-gray-400
+            hover:bg-white/10
+            hover:text-white
+            transition-all
+          "
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 5v14m7-7H5"
+                  />
+                </svg>
+              </button>
 
-          <button
-            onClick={() => sendMessage()}
-            disabled={loading}
-            className="px-5 py-3 rounded-full bg-blue-600 hover:bg-blue-500 active:scale-95 transition font-medium disabled:opacity-50 shadow-md"
-          >
-            ➤
-          </button>
+              {/* DROPDOWN */}
+              {showMenu && (
+                <div className="absolute bottom-12 left-0 bg-black/90 border border-white/10 rounded-xl shadow-lg p-2 w-48">
+                  {/* Deep Search */}
+                  <button
+                    onClick={() => {
+                      setMode("deep");
+                      setShowMenu(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition
+                ${
+                  mode === "deep"
+                    ? "bg-purple-600/20 text-purple-300"
+                    : "text-white hover:bg-white/10"
+                }`}
+                  >
+                    🔍 Deep Search
+                  </button>
+
+                  {/* Normal Chat */}
+                  <button
+                    onClick={() => {
+                      setMode("chat");
+                      setShowMenu(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition
+                ${
+                  mode === "chat"
+                    ? "bg-blue-600/20 text-blue-300"
+                    : "text-white hover:bg-white/10"
+                }`}
+                  >
+                    ⚡ Normal Chat
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* INPUT FIELD */}
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleEnter}
+              placeholder={
+                mode === "deep"
+                  ? "Ask anything (Deep Search)..."
+                  : "Type your message..."
+              }
+              className="flex-1 bg-transparent outline-none text-sm placeholder:text-gray-400 px-2"
+            />
+
+            {/* SEND BUTTON */}
+            <button
+              onClick={() => sendMessage()}
+              disabled={loading}
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-500 active:scale-95 transition disabled:opacity-50"
+            >
+              ➤
+            </button>
+          </div>
         </div>
       </div>
 
