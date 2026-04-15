@@ -1,20 +1,21 @@
-import { useState } from "react";
 import ChatAssistant from "../components/ChatAssistant";
-import HowToUse from "../components/HowToUse";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../api/api";
 
 export default function Chat() {
-  const [showInstructions, setShowInstructions] = useState(false);
+  const navigate = useNavigate();
   const handleLogout = async () => {
-    await fetch("http://localhost:5000/auth/logout", {
-      credentials: "include",
-    });
-
-    window.location.href = "/";
+    try {
+      await logoutUser();
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
   };
   return (
     <div className="h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white flex flex-col">
       {/* HEADER */}
-     <header className="backdrop-blur-md bg-white/5 border-b border-white/10 shadow-md">
+      <header className="backdrop-blur-md bg-white/5 border-b border-white/10 shadow-md">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* LEFT (unchanged logo/title) */}
           <h1 className="text-xl font-semibold tracking-wide">
@@ -24,7 +25,7 @@ export default function Chat() {
           {/* RIGHT (improved buttons) */}
           <div className="flex items-center gap-3 md:gap-5 text-sm">
             <button
-              onClick={() => setShowInstructions(true)}
+              onClick={() => navigate("/how-to-use")}
               className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white transition"
             >
               How to Use
@@ -46,11 +47,6 @@ export default function Chat() {
 
       {/* CHAT */}
       <ChatAssistant />
-
-      {/* MODAL */}
-      {showInstructions && (
-        <HowToUse onClose={() => setShowInstructions(false)} />
-      )}
     </div>
   );
 }
