@@ -37,3 +37,19 @@ export async function logoutUser() {
 
   return res.json();
 }
+
+// 🔐 get current user
+export async function getCurrentUser() {
+  const res = await fetch(`${BASE_URL}/auth/me`, {
+    credentials: "include",
+  });
+
+  if (!res.ok) throw new Error("Not logged in");
+
+  return res.json();
+}
+
+// 🔐 login redirect
+export function loginWithGoogle() {
+  window.location.href = `${BASE_URL}/auth/google`;
+}

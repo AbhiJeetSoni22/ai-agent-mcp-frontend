@@ -1,9 +1,23 @@
 import ChatAssistant from "../components/ChatAssistant";
 import { useNavigate } from "react-router-dom";
-import { logoutUser } from "../api/api";
+import { getCurrentUser, logoutUser } from "../api/api";
+import { useEffect } from "react";
 
 export default function Chat() {
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        await getCurrentUser();
+      } catch {
+        navigate("/"); // ❌ not logged in
+      }
+    };
+
+    checkAuth();
+  }, []);
   const handleLogout = async () => {
     try {
       await logoutUser();
