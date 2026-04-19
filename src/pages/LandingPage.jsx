@@ -1,7 +1,23 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getCurrentUser } from "../api/api";
 
 export default function LandingPage() {
   const navigate = useNavigate();
+    useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const user = await getCurrentUser();
+        if (user) {
+          navigate("/chat"); // ✅ auto redirect
+        }
+      } catch {
+        // not logged in
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white">
