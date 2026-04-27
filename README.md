@@ -1,80 +1,99 @@
 # MCP AI Assistant - Frontend
 
-A React + Vite powered AI Assistant frontend that integrates with MCP (Model Context Protocol) services for Gmail, Calendar, and GitHub management. Built with a modern, dark-themed UI using Tailwind CSS.
+A React + Vite frontend for the MCP AI Assistant platform. This app connects to the backend API to power chat, authentication, and AI-assisted workflows.
 
 ---
 
 ## 📁 Project Structure
 
-```
-ai-agent-mcp-frontend/
-├── public/                    # Static assets
+```text
+a i- agent- mcp-frontend/
+├── public/                    # Static assets and favicon
 ├── src/
-│   ├── components/           # Reusable React components
-│   │   ├── ChatAssistant.jsx # Main chat interface component
-│   │   ├── ConfirmationModal.jsx # Confirmation dialog for destructive actions
-│   │   └── HowToUse.jsx      # Instructions/help modal component
-│   ├── assets/               # Image, icon, and media files
-│   ├── App.jsx              # Root application component
-│   ├── App.css              # Application styles
-│   ├── main.jsx             # React DOM entry point
-│   └── index.css            # Global styles and Tailwind imports
-├── .env                      # Environment variables (API endpoints, etc.)
-├── .gitignore               # Git ignore rules
-├── eslint.config.js         # ESLint configuration
-├── index.html               # HTML entry point
-├── package.json             # Project dependencies and scripts
-├── vite.config.js           # Vite build configuration
-└── README.md                # This file
+│   ├── api/                   # API helper functions
+│   │   └── api.js
+│   ├── assets/                # Image and media files
+│   ├── components/            # Reusable UI components
+│   │   ├── ChatAssistant.jsx
+│   │ ├── ConfirmationModal.jsx
+│   │   ├── HowToUse.jsx
+│   │   └── ProtectedRoute.jsx
+│   ├── pages/                 # Route pages
+│   │   ├── Chat.jsx
+│   │   ├── HowToUsePage.jsx
+│   │   ├── LandingPage.jsx
+│   │   └── Login.jsx
+│   ├── App.css                # Application styles
+│   ├── App.jsx                # Route definitions and layout
+│   ├── index.css              # Global styles and Tailwind imports
+│   └── main.jsx               # React DOM entry point
+├── .env                       # Environment variables
+├── .gitignore                 # Git ignore rules
+├── eslint.config.js           # ESLint configuration
+├── index.html                 # HTML entry point
+├── package.json              # Project dependencies and scripts
+├── vite.config.js             # Vite config
+└── README.md                  # This file
 ```
 
 ---
 
 ## 📄 File Descriptions
 
-### **Root Files**
+### Root Files
 
 | File | Purpose |
 |------|---------|
-| `.env` | Environment configuration (API base URL, backend endpoints) |
-| `.gitignore` | Specifies files/folders to exclude from git version control |
-| `index.html` | Entry HTML file, loads React app |
-| `package.json` | Project metadata, dependencies, and npm scripts |
+| `.env` | Frontend environment variables |
+| `.gitignore` | Files and folders ignored by git |
+| `index.html` | HTML entry point for the React app |
+| `package.json` | npm scripts and dependencies |
 | `vite.config.js` | Vite bundler configuration |
-| `eslint.config.js` | Code linting rules and standards |
+| `eslint.config.js` | Linting rules and settings |
 
-### **Source Files (`src/`)**
+### Source Files (`src/`)
 
 | File | Purpose |
 |------|---------|
-| `main.jsx` | ReactDOM rendering entry point, mounts App to DOM |
-| `App.jsx` | Root component managing overall layout, routing, and state |
-| `App.css` | Application-level styles |
-| `index.css` | Global styles, Tailwind CSS imports, and CSS resets |
+| `main.jsx` | Mounts the React application |
+| `App.jsx` | Defines app routing and pages |
+| `App.css` | Application-wide styles |
+| `index.css` | Global CSS and Tailwind setup |
 
-### **Components (`src/components/`)**
+### API Helpers (`src/api/`)
+
+| File | Purpose |
+|------|---------|
+| `api.js` | Backend API helpers for chat, auth, and deep search |
+
+### Pages (`src/pages/`)
+
+| File | Purpose |
+|------|---------|
+| `LandingPage.jsx` | Landing screen for the app |
+| `Login.jsx` | Google login and auth flow page |
+| `Chat.jsx` | Main chat interface page |
+| `HowToUsePage.jsx` | Usage guide and instructions page |
+
+### Components (`src/components/`)
 
 | Component | Purpose |
 |-----------|---------|
-| `ChatAssistant.jsx` | Main chat interface for AI interactions. Manages message state, user input, API communication with backend, and scrolling. Detects destructive operations and shows confirmation modals. Displays chat messages with markdown support. |
-| `ConfirmationModal.jsx` | Modal dialog component for confirming destructive actions (e.g., "Delete All Events"). Displays warning title, confirmation message, and action buttons. |
-| `HowToUse.jsx` | Instructions/help modal providing user guidance on how to use different features (Gmail, Calendar, GitHub) with example commands and explanations. |
-
-### **Assets (`src/assets/`)**
-
-Stores images, icons, and static media files used throughout the application.
+| `ChatAssistant.jsx` | Chat UI component with messaging, markdown rendering, and session handling |
+| `ConfirmationModal.jsx` | Modal for confirming sensitive actions |
+| `HowToUse.jsx` | Help/instructions panel for users |
+| `ProtectedRoute.jsx` | Route wrapper for protected views (if used) |
 
 ---
 
 ## 🚀 Key Features
 
-- **Chat Interface**: Real-time AI chat with markdown support
-- **Destructive Action Protection**: Confirmation modals for sensitive operations
-- **Gmail Integration**: View, send, and manage emails
-- **Calendar Integration**: View and manage calendar events
-- **GitHub Integration**: Search and interact with GitHub repositories
-- **Responsive Design**: Dark theme UI optimized for all screen sizes
-- **Session Management**: Unique session IDs for tracking conversations
+- Real-time AI chat interface
+- Google OAuth auth flow integration
+- Backend API requests for chat, logout, and user data
+- Markdown rendering for assistant messages
+- Tailwind CSS styling with Vite
+- Route-based UI using React Router
 
 ---
 
@@ -90,23 +109,20 @@ npm install
 ```
 
 ### Environment Configuration
-Create a `.env` file in the root directory:
-```
-VITE_API_BASE_URL=http://localhost:5000
-VITE_BACKEND_URL=http://localhost:5000/api
+Create a `.env` file in the frontend root with:
+```bash
+VITE_BASE_URL=http://localhost:5000
 ```
 
 ### Development Server
 ```bash
 npm run dev
 ```
-Runs the app in development mode with HMR (Hot Module Replacement).
 
 ### Build for Production
 ```bash
 npm run build
 ```
-Generates optimized production build in the `dist/` folder.
 
 ### Preview Production Build
 ```bash
@@ -122,27 +138,28 @@ npm run lint
 
 ## 🔧 Technology Stack
 
-- **React**: UI library for building components
-- **Vite**: Next-generation frontend build tool
-- **Tailwind CSS**: Utility-first CSS framework
-- **React Markdown**: For rendering markdown in chat messages
-- **ESLint**: Code quality and style enforcement
+- React 19
+- Vite
+- Tailwind CSS
+- React Router DOM
+- React Markdown
+- ESLint
 
 ---
 
 ## 💡 Usage
 
-1. **Start the backend** (from `ai-agent-mcp-backend/`)
-2. **Run the frontend dev server** (`npm run dev`)
-3. **Open browser** at `http://localhost:5173`
-4. **Interact with the AI Assistant** using natural language commands
-5. **Confirm destructive actions** when prompted
+1. Start the backend from `ai-agent-mcp-backend/`
+2. Start the frontend with `npm run dev`
+3. Open `http://localhost:5173`
+4. Use the AI Assistant chat interface
+5. Login and interact with chat-based workflows
 
 ---
 
 ## 📝 Notes
 
-- Components use modern React hooks (`useState`, `useRef`, `useEffect`)
-- Styling leverages Tailwind CSS utility classes
-- The app communicates with a backend API for AI and service integrations
-- Session IDs track conversation context across messages
+- The frontend uses `import.meta.env.VITE_BASE_URL` to call the backend API.
+- `src/api/api.js` handles chat, logout, current user, and future deep-search requests.
+- `App.jsx` defines routes for `/`, `/login`, `/chat`, and `/how-to-use`.
+- Session IDs are passed in the chat request header `x-session-id`.
