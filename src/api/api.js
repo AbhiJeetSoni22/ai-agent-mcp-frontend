@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 //  Normal Chat API
 export async function sendChatMessage(message, sessionId) {
