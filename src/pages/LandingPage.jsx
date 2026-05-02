@@ -9,7 +9,7 @@ export default function LandingPage() {
       try {
         const user = await getCurrentUser();
         if (user) {
-          navigate("/chat"); 
+          navigate("/chat"); // ✅ auto redirect
         }
       } catch {
         // not logged in

@@ -12,7 +12,7 @@ export default function Chat() {
       try {
         await getCurrentUser();
       } catch {
-        navigate("/"); 
+        navigate("/"); // ❌ not logged in
       }
     };
 
