@@ -4,20 +4,23 @@ import { getCurrentUser } from "../api/api";
 
 export default function LandingPage() {
   const navigate = useNavigate();
-    useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const user = await getCurrentUser();
-        if (user) {
-          navigate("/chat"); // ✅ auto redirect
-        }
-      } catch {
-        // not logged in
-      }
-    };
 
-    checkAuth();
-  }, [navigate]);
+useEffect(() => {
+  const checkAuth = async () => {
+    try {
+      const user = await getCurrentUser();
+      if (user) {
+        navigate("/chat");
+      }
+    } catch {
+      // not logged in
+    }
+  };
+
+  const timer = setTimeout(checkAuth, 300); // ✅ delay added
+
+  return () => clearTimeout(timer);
+}, [navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white">
