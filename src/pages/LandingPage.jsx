@@ -17,7 +17,7 @@ useEffect(() => {
     }
   };
 
-  const timer = setTimeout(checkAuth, 300); // ✅ delay added
+  const timer = setTimeout(checkAuth, 300); 
 
   return () => clearTimeout(timer);
 }, [navigate]);
