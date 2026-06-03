@@ -4,23 +4,23 @@ import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Chat from "./pages/Chat";
 import HowToUsePage from "./pages/HowToUsePage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 export default function App() {
   return (
+    <Routes>
+      {/* Landing */}
+      <Route path="/" element={<LandingPage />} />
 
-      <Routes>
-        {/* Landing */}
-        <Route path="/" element={<LandingPage />} />
+      {/* Auth */}
+      <Route path="/login" element={<Login />} />
 
-        {/* Auth */}
-        <Route path="/login" element={<Login />} />
+      {/* App */}
+      <Route path="/chat" element={<Chat />} />
 
-        {/* App */}
-        <Route path="/chat" element={<Chat />} />
-
-        {/* Docs */}
-        <Route path="/how-to-use" element={<HowToUsePage />} />
-      </Routes>
-
+      {/* Docs */}
+      <Route path="/how-to-use" element={<HowToUsePage />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+    </Routes>
   );
 }
