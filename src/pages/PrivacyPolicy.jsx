@@ -123,7 +123,7 @@ export default function PrivacyPolicy() {
             If you have questions regarding this Privacy Policy, please contact:
           </p>
 
-          <p className="text-blue-400 mt-3">your-email@gmail.com</p>
+          <p className="text-blue-400 mt-3">abhisonijeet123@gmail.com</p>
         </section>
       </div>
     </div>
